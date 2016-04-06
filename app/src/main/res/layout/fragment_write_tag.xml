@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp"
+    tools:context="com.aalto.nfctracking.WriteTagFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NFC Tag ID"
+        android:id="@+id/nfcTagIdLabel"
+        android:layout_marginTop="60dp"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        android:textColor="@color/darkNavyBlue"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nfcTagId"
+        android:textSize="15dp"
+        android:editable="false"
+        android:background="#eaece9"
+        android:hint="Assigned by bimserver."/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Id and Write"
+        android:id="@+id/writeBtn"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        android:textColor="@color/darkNavyBlue" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Attach NFC Tag to device..."
+        android:id="@+id/attachTagMsg"
+        android:layout_marginTop="60dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/darkNavyBlue"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Action Complete!"
+        android:id="@+id/successMessage"
+        android:layout_marginTop="60dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/success"
+        android:visibility="invisible"/>
+</LinearLayout>
