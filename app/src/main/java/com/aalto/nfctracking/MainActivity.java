@@ -2,26 +2,32 @@ package com.aalto.nfctracking;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.aalto.nfctracking.utils.RestApiCall;
+import com.android.volley.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements FragmentInteractionListener{
 
@@ -37,28 +43,29 @@ public class MainActivity extends AppCompatActivity implements FragmentInteracti
         setContentView(R.layout.activity_main);
         Log.i("DNES", "MainActivity onCreate");
         checkNFC();
-
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Find our drawer view
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        nvDrawer = (NavigationView) findViewById(R.id.nvView);
-        setupDrawerContent();
 
         SharedPreferences preferences = getPreferences(0);
-        String nfcReaderId = preferences.getString("nfcReaderId", "");
-        if(nfcReaderId.isEmpty()) {
-            //Not registerd to server yet, so load settings fragment.
-            changeFragment(new SettingsFragment());
-//            Fragment settings_fragment = new SettingsFragment();
-//            FragmentManager fragmentManager = getSupportFragmentManager();
-//            currentFragment = settings_fragment;
-//            fragmentManager.beginTransaction().replace(R.id.flContent, settings_fragment).commit();
+        String loggedUserName = preferences.getString("loggedUserName", "");
+        if(loggedUserName.isEmpty()) {
+            Log.i("DNES", "Not logged in! directing to login screen");
+            changeFragment(new LoginFragment());
         } else {
-            changeFragment(new HomeFragment());
-            //getSupportFragmentManager().beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();
+            loginToBimServer();
+
+            setupDrawerContent();
+
+            String nfcReaderId = preferences.getString("nfcReaderId", "");
+            if(nfcReaderId.isEmpty()) {
+                //reader not registerd to server yet, so load settings fragment.
+                changeFragment(new SettingsFragment());
+            } else {
+                changeFragment(new HomeFragment());
+            }
         }
+
 
     }
 
@@ -139,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements FragmentInteracti
     }
 
     private void setupDrawerContent() {
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
         nvDrawer.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -151,10 +160,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInteracti
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the planet to show based on
-        // position
         Fragment fragment = null;
-        Toast.makeText(this, menuItem.toString(), Toast.LENGTH_LONG).show();
         Class fragmentClass;
         switch(menuItem.getItemId()) {
             case R.id.read_tag_fragment:
@@ -176,12 +182,7 @@ public class MainActivity extends AppCompatActivity implements FragmentInteracti
             e.printStackTrace();
         }
 
-        // Insert the fragment by replacing any existing fragment
         changeFragment(fragment);
-
-        // Highlight the selected item, update the title, and close the drawer
-        // Highlight the selected item has been done by NavigationView
-        // menuItem.setChecked(true);
         setTitle(menuItem.getTitle());
         mDrawer.closeDrawers();
     }
@@ -218,5 +219,47 @@ public class MainActivity extends AppCompatActivity implements FragmentInteracti
         currentFragment = destinationFragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.flContent, destinationFragment).commit();
         getIntent().setAction("");
+    }
+
+    private boolean isUserLoggedIn() {
+        Log.i("DNES", "Main Activity | checkUserLoggedIn");
+        SharedPreferences preferences = getPreferences(0);
+        String userName = preferences.getString("loggedUserName", "");
+        if(userName.equals("")){
+            changeFragment(new LoginFragment());
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void loginToBimServer(){
+        Log.i("DNES", "Main Activity | loginToBimServer");
+        try {
+            JSONObject req = new JSONObject();
+            req.put("interface", "Bimsie1AuthInterface");
+            req.put("method", "login");
+
+            JSONObject param = new JSONObject();
+            param.put("username", "admin@bimserver.org");
+            param.put("password", "admin");
+            req.put("parameters", param);
+
+            Response.Listener successListener = new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i("DNES", "Response: " + response.toString());
+                    try {
+                        String result = response.getJSONObject("response").getString("result");
+                        RestApiCall.BIM_AUTH_TOKEN = result;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            RestApiCall.postJsonObjectReqest(this, req, successListener);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

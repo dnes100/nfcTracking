@@ -16,14 +16,15 @@ import org.json.JSONObject;
 
 public class RestApiCall {
     private static String BIM_SERVER_URL = "http://10.100.45.232:8080/json";
-    private static String BIM_TOKEN = "2041539766217e75e627f889daea7083c7428bd196cf3a74acecc1fcf51910d35b00b023f96fcf2c1479ec747aa81862";
+    public static String BIM_AUTH_TOKEN;
+
 
     public static void postJsonObjectReqest(final Activity activity, JSONObject param, Response.Listener successListener){
         Log.i("DNES", "RestApiCall PostRequest");
 
         JSONObject reqParam = new JSONObject();
         try {
-            reqParam.put("token", BIM_TOKEN);
+            reqParam.put("token", BIM_AUTH_TOKEN);
             reqParam.put("request", param);
         } catch (JSONException e) {
             e.printStackTrace();

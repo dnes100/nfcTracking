@@ -3,10 +3,10 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/read_tag_fragment"
-            android:title="Read NFC Tag" />
+            android:title="Read Product Tag" />
         <item
             android:id="@+id/write_tag_fragment"
-            android:title="Write" />
+            android:title="Write To Product Tag" />
         <item
             android:id="@+id/settings_fragment"
             android:title="Settings" />

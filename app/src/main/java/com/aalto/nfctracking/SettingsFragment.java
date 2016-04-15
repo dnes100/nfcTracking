@@ -175,7 +175,7 @@ public class SettingsFragment extends Fragment {
         nfcReaderNameField.setText("", TextView.BufferType.NORMAL);
         nfcReaderNameField.setEnabled(true);
         nfcReaderLocationField.setText("", TextView.BufferType.NORMAL);
-        nfcReaderNameField.setEnabled(true);
+        nfcReaderLocationField.setEnabled(true);
         Toast.makeText(getActivity(), "Preference Cleared!", Toast.LENGTH_SHORT).show();
     }
 
