@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -15,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RestApiCall {
-    private static String BIM_SERVER_URL = "http://10.100.45.232:8080/json";
+    private static String BIM_SERVER_URL = "http://192.168.1.213:8080/json";
     public static String BIM_AUTH_TOKEN;
 
 
@@ -41,6 +42,9 @@ public class RestApiCall {
 
                     }
                 });
+        jsonObjRequest.setRetryPolicy(new DefaultRetryPolicy(5000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         Volley.newRequestQueue(activity).add(jsonObjRequest);
     }
 }

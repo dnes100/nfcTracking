@@ -8,7 +8,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Read TAG"
+        android:text="Read PRODUCT"
         android:id="@+id/readFragmentBtn"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
@@ -20,7 +20,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Write TAG"
+        android:text="URI CONNECTION"
         android:id="@+id/writeFragmentBtn"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
